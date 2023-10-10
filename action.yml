@@ -1,0 +1,33 @@
+name: "GitHub Classroom Autograding IO Test Runner"
+author: "GitHub"
+description: "Integrate your CS class wit GitHub using GitHub Classroom"
+inputs:
+  test-name:
+    description: "Name for test"
+    required: true
+  setup-command:
+    description: "Command to run before running test"
+    required: false
+  command:
+    description: "Command to run. Zero exit code grants points"
+    required: true
+  input:
+    description: "input passed to the command via stdin"
+    required: true
+  expected-output:
+    description: "expected output printed to stdout"
+    required: true
+  comparison-method:
+    description: "Method used to compare stdout output. Must be included, exact, or regex"
+    required: true
+  timeout:
+    description: "The amount of minutes the test is allowed to run before it is killed. Maximum 60 minutes."
+    default: "10"
+    required: false
+outputs:
+  result:
+    description: "Runner output"
+
+runs:
+  using: 'node20'
+  main: 'src/index.js'
