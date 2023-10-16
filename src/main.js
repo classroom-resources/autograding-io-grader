@@ -91,7 +91,7 @@ function run() {
             }]
         }
 
-        core.setOutput('result', JSON.stringify(result));
+        core.setOutput('result', btoa(JSON.stringify(result)));
 
     } catch (error) {
         const result = {
@@ -108,7 +108,7 @@ function run() {
             }]
         }
 
-        core.setOutput('result', JSON.stringify(result));
+        core.setOutput('result', btoa(JSON.stringify(result)));
     }
 }
 

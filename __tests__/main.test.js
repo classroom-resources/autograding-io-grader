@@ -18,8 +18,8 @@ test('test runs', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
-    const resultJsonString = stdout.split('::set-output name=result::')[1].trim();
-    const result = JSON.parse(resultJsonString);
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = JSON.parse(atob(encodedResult));
 
     // Asserting on specific properties of the result
     expect(result.status).toBe('pass');
@@ -33,8 +33,10 @@ test('outputs error if test-name not provided', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = atob(encodedResult);
 
-    expect(stdout).toContain("Input required and not supplied: test-name");
+    expect(result).toContain("Input required and not supplied: test-name");
 });
 
 test('outputs error if command is not provided', () => {
@@ -43,8 +45,10 @@ test('outputs error if command is not provided', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = atob(encodedResult);
 
-    expect(stdout).toContain("Input required and not supplied: command");
+    expect(result).toContain("Input required and not supplied: command");
 });
 
 test('outputs error if expected-output is not provided', () => {
@@ -54,8 +58,10 @@ test('outputs error if expected-output is not provided', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = atob(encodedResult);
 
-    expect(stdout).toContain("Input required and not supplied: expected-output");
+    expect(result).toContain("Input required and not supplied: expected-output");
 });
 
 test('outputs error if comparison-method is not provided', () => {
@@ -66,8 +72,10 @@ test('outputs error if comparison-method is not provided', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = atob(encodedResult);
 
-    expect(stdout).toContain("Input required and not supplied: comparison-method");
+    expect(result).toContain("Input required and not supplied: comparison-method");
 });
 
 test('throws error for invalid comparison method', () => {
@@ -80,8 +88,10 @@ test('throws error for invalid comparison method', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = atob(encodedResult);
 
-    expect(stdout).toContain("Invalid comparison method: invalid_method");
+    expect(result).toContain("Invalid comparison method: invalid_method");
 });
 
 test('handles command timeout correctly', () => {
@@ -94,8 +104,8 @@ test('handles command timeout correctly', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
-    const resultJsonString = stdout.split('::set-output name=result::')[1].trim();
-    const result = JSON.parse(resultJsonString);
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = JSON.parse(atob(encodedResult));
 
     expect(result.tests[0].status).toBe('fail');
     expect(result.tests[0].message).toContain("Command was killed due to timeout");
@@ -111,8 +121,8 @@ test('runs comparison method: exact', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
-    const resultJsonString = stdout.split('::set-output name=result::')[1].trim();
-    const result = JSON.parse(resultJsonString);
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = JSON.parse(atob(encodedResult));
 
     expect(result.tests[0].status).toBe('pass');
     expect(result.tests[0].message).toBe(null);
@@ -128,8 +138,8 @@ test('runs comparison method: contains', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
-    const resultJsonString = stdout.split('::set-output name=result::')[1].trim();
-    const result = JSON.parse(resultJsonString);
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = JSON.parse(atob(encodedResult));
 
     expect(result.tests[0].status).toBe('pass');
     expect(result.tests[0].message).toBe(null);
@@ -145,8 +155,8 @@ test('runs comparison method: regex', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
-    const resultJsonString = stdout.split('::set-output name=result::')[1].trim();
-    const result = JSON.parse(resultJsonString);
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = JSON.parse(atob(encodedResult));
 
     expect(result.tests[0].status).toBe('pass');
     expect(result.tests[0].message).toBe(null);
@@ -163,8 +173,8 @@ test('passes input through standard input', () => {
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
 
-    const resultJsonString = stdout.split('::set-output name=result::')[1].trim();
-    const result = JSON.parse(resultJsonString);
+    const encodedResult = stdout.split('::set-output name=result::')[1].trim();
+    const result = JSON.parse(atob(encodedResult));
 
     expect(result.tests[0].status).toBe('pass');
     expect(result.tests[0].message).toBe(null);

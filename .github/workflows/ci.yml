@@ -1,0 +1,33 @@
+name: CI
+
+on: [push]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name:  npm test
+        shell: bash
+        run: |
+          npm test
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          test-name: "echo test"
+          setup-command: "echo 'Getting Setup'"
+          command: "echo 'Hello, World'"
+          expected-output: "Hello, World"
+          comparison-method: "contains"
+      - uses: ./
+        with:
+          test-name: "cat test"
+          setup-command: "echo 'Getting Setup'"
+          command: "cat"
+          input: "from stdin"
+          expected-output: "from stdin"
+          comparison-method: "contains"
