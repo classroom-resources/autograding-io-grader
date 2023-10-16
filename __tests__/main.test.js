@@ -23,7 +23,6 @@ test('test runs', () => {
 
     // Asserting on specific properties of the result
     expect(result.status).toBe('pass');
-    expect(result.message).toBe(null);
     expect(result.tests[0].name).toBe('Test 1');
     expect(result.tests[0].status).toBe('pass');
     expect(result.tests[0].message).toBe(null)
@@ -81,7 +80,6 @@ test('throws error for invalid comparison method', () => {
 
     const child = cp.spawnSync(np, [ip], options);
     const stdout = child.stdout.toString();
-
 
     expect(stdout).toContain("Invalid comparison method: invalid_method");
 });

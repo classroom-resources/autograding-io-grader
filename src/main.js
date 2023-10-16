@@ -5,17 +5,21 @@ const {
 } = require('child_process');
 const core = require('@actions/core');
 
-function runAction() {
+function run() {
+    let testName;
+    let command;
+    let input;
+
     try {
         // Parse Inputs
-        const testName = core.getInput('test-name', {
+        testName = core.getInput('test-name', {
             required: true
         });
         const setupCommand = core.getInput('setup-command');
-        const command = core.getInput('command', {
+        command = core.getInput('command', {
             required: true
         });
-        const input = core.getInput('input').trim();
+        input = core.getInput('input').trim();
         const expectedOutput = core.getInput('expected-output', {
             required: true
         });
@@ -48,16 +52,20 @@ function runAction() {
         let error;
         let status = 'pass';
         let message = null;
+        const startTime = new Date();
+        let endTime;
 
         try {
             output = execSync(command, {
                 input,
                 timeout
             }).toString().trim();
+            endTime = new Date();
         } catch (e) {
             error = e;
             status = 'fail';
             message = e.message.includes("ETIMEDOUT") ? "Command was killed due to timeout" : e.message;
+            endTime = new Date();
         }
 
         // Output Comparison
@@ -69,22 +77,38 @@ function runAction() {
             }
         }
 
-        // Generate Output
         const result = {
+            version: 1,
             status: status,
-            message: message,
             tests: [{
                 name: testName,
                 status: status,
-                message: message
+                message: message,
+                test_code: `${command} <stdin>${input}`,
+                filename: "",
+                line_no: 0,
+                duration: endTime - startTime
             }]
-        };
+        }
 
-        // Set GitHub Action Output
         core.setOutput('result', JSON.stringify(result));
 
     } catch (error) {
-        core.setFailed(error.message);
+        const result = {
+            version: 1,
+            status: "fail",
+            tests: [{
+                name: testName,
+                status: 'fail',
+                message: error.message,
+                test_code: `${command} <stdin>${input}`,
+                filename: "",
+                line_no: 0,
+                duration: 0
+            }]
+        }
+
+        core.setOutput('result', JSON.stringify(result));
     }
 }
 
@@ -102,4 +126,4 @@ function compareOutput(output, expected, method) {
     }
 }
 
-runAction();
+run();
