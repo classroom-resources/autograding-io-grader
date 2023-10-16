@@ -10,6 +10,7 @@ jobs:
       - name:  npm test
         shell: bash
         run: |
+          npm install
           npm test
 
   integration:
