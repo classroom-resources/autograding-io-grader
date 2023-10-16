@@ -16,7 +16,7 @@
 | `test-name` | Name of the test. | Yes |
 | `setup-command` | A command that runs before the test. Useful for setting up the environment or dependencies. | No |
 | `command` | The main command to run for testing. A zero exit code indicates a passed test and grants points. | Yes |
-| `input` | The input data that will be passed to the command via stdin. | Yes |
+| `input` | The input data that will be passed to the command via stdin. | No |
 | `expected-output` | The expected output that the command should print to stdout. | Yes |
 | `comparison-method` | Defines how the stdout output will be compared. Supported values are `included`, `exact`, and `regex`. | Yes |
 | `timeout` | Specifies the time limit (in minutes) for the test to run. The maximum allowed value is 60 minutes. Defaults to 10 minutes if not specified. | No |
