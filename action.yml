@@ -13,7 +13,7 @@ inputs:
     required: true
   input:
     description: "input passed to the command via stdin"
-    required: true
+    required: false
   expected-output:
     description: "expected output printed to stdout"
     required: true
