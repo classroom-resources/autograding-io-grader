@@ -3,7 +3,7 @@ author: "GitHub"
 description: "Integrate your CS class wit GitHub using GitHub Classroom"
 inputs:
   test-name:
-    description: "Name for test"
+    description: "Test name"
     required: true
   setup-command:
     description: "Command to run before running test"
@@ -12,10 +12,10 @@ inputs:
     description: "Command to run. Zero exit code grants points"
     required: true
   input:
-    description: "input passed to the command via stdin"
+    description: "Input passed to the command via stdin"
     required: false
   expected-output:
-    description: "expected output printed to stdout"
+    description: "Expected output printed to stdout"
     required: true
   comparison-method:
     description: "Method used to compare stdout output. Must be included, exact, or regex"
