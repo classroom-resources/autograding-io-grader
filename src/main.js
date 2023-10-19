@@ -1,114 +1,58 @@
-// src/index.js
-
 const {
     execSync
 } = require('child_process');
 const core = require('@actions/core');
 
-function run() {
-    let testName;
-    let command;
-    let input;
+function getInputs() {
+    const testName = core.getInput('test-name', {
+        required: true
+    });
+    const setupCommand = core.getInput('setup-command');
+    const command = core.getInput('command', {
+        required: true
+    });
+    const input = core.getInput('input').trim();
+    const expectedOutput = core.getInput('expected-output', {
+        required: true
+    });
+    const comparisonMethod = core.getInput('comparison-method', {
+        required: true
+    });
+    const timeout = parseFloat(core.getInput('timeout') || 10) * 60000; // Convert to minutes
 
+    if (!['exact', 'contains', 'regex'].includes(comparisonMethod)) {
+        throw new Error(`Invalid comparison method: ${comparisonMethod}`);
+    }
+
+    if (!testName || !command || !expectedOutput || !comparisonMethod) {
+        throw new Error("Required inputs are missing or invalid");
+    }
+
+    return {
+        testName,
+        setupCommand,
+        command,
+        input,
+        expectedOutput,
+        comparisonMethod,
+        timeout
+    };
+}
+
+function executeTest(command, input, timeout) {
     try {
-        // Parse Inputs
-        testName = core.getInput('test-name', {
-            required: true
-        });
-        const setupCommand = core.getInput('setup-command');
-        command = core.getInput('command', {
-            required: true
-        });
-        input = core.getInput('input').trim();
-        const expectedOutput = core.getInput('expected-output', {
-            required: true
-        });
-        const comparisonMethod = core.getInput('comparison-method', {
-            required: true
-        });
-
-        if (!['exact', 'contains', 'regex'].includes(comparisonMethod)) {
-            throw new Error(`Invalid comparison method: ${comparisonMethod}`);
-        }
-
-        const timeout = parseInt(core.getInput('timeout', {
-            required: true
-        })) * 1000; // Convert to ms
-
-        if (!testName || !command || !expectedOutput || !comparisonMethod, !timeout) {
-            throw new Error("Required inputs are missing or invalid");
-        }
-
-        // Setup Phase
-        if (setupCommand) {
-            execSync(setupCommand, {
-                timeout,
-                stdio: 'ignore'
-            });
-        }
-
-        // Test Execution
-        let output;
-        let error;
-        let status = 'pass';
-        let message = null;
-        const startTime = new Date();
-        let endTime;
-
-        try {
-            output = execSync(command, {
-                input,
-                timeout
-            }).toString().trim();
-            endTime = new Date();
-        } catch (e) {
-            error = e;
-            status = 'fail';
-            message = e.message.includes("ETIMEDOUT") ? "Command was killed due to timeout" : e.message;
-            endTime = new Date();
-        }
-
-        // Output Comparison
-        if (status === 'pass') {
-            const isMatch = compareOutput(output, expectedOutput, comparisonMethod);
-            if (!isMatch) {
-                status = 'fail';
-                message = `Output does not match expected. Got: ${output}`;
-            }
-        }
-
-        const result = {
-            version: 1,
-            status: status,
-            tests: [{
-                name: testName,
-                status: status,
-                message: message,
-                test_code: `${command} <stdin>${input}`,
-                filename: "",
-                line_no: 0,
-                duration: endTime - startTime
-            }]
-        }
-
-        core.setOutput('result', btoa(JSON.stringify(result)));
-
-    } catch (error) {
-        const result = {
-            version: 1,
-            status: "fail",
-            tests: [{
-                name: testName,
-                status: 'fail',
-                message: error.message,
-                test_code: `${command} <stdin>${input}`,
-                filename: "",
-                line_no: 0,
-                duration: 0
-            }]
-        }
-
-        core.setOutput('result', btoa(JSON.stringify(result)));
+        const output = execSync(command, {
+            input,
+            timeout
+        }).toString().trim();
+        return {
+            output
+        };
+    } catch (e) {
+        const message = e.message.includes("ETIMEDOUT") ? "Command was killed due to timeout" : e.message;
+        return {
+            error: message
+        };
     }
 }
 
@@ -124,6 +68,76 @@ function compareOutput(output, expected, method) {
         default:
             throw new Error(`Invalid comparison method: ${method}`);
     }
+}
+
+function run() {
+    let inputs = {};
+    try {
+        inputs = getInputs();
+
+        if (inputs.setupCommand) {
+            execSync(inputs.setupCommand, {
+                timeout: inputs.timeout,
+                stdio: 'ignore'
+            });
+        }
+
+        const startTime = new Date();
+        const {
+            output,
+            error
+        } = executeTest(inputs.command, inputs.input, inputs.timeout);
+        const endTime = new Date();
+
+        let status = 'pass';
+        let message = null;
+
+        if (error) {
+            status = 'fail';
+            message = error;
+        } else if (!compareOutput(output, inputs.expectedOutput, inputs.comparisonMethod)) {
+            status = 'fail';
+            message = `Output does not match expected. Got: ${output}`;
+        }
+
+        const result = {
+            version: 1,
+            status: status,
+            tests: [{
+                name: inputs.testName,
+                status: status,
+                message: message,
+                test_code: `${inputs.command} <stdin>${inputs.input}`,
+                filename: "",
+                line_no: 0,
+                duration: endTime - startTime
+            }]
+        };
+
+        core.setOutput('result', btoa(JSON.stringify(result)));
+
+    } catch (error) {
+        const result = {
+            version: 1,
+            status: "fail",
+            tests: [{
+                name: inputs.testName || "Unknown Test",
+                status: 'fail',
+                message: error.message,
+                test_code: `${inputs.command || "Unknown Command"} <stdin>${inputs.input || ""}`,
+                filename: "",
+                line_no: 0,
+                duration: 0
+            }]
+        };
+
+        core.setOutput('result', btoa(JSON.stringify(result)));
+    }
+}
+
+
+function btoa(str) {
+    return Buffer.from(str).toString('base64');
 }
 
 run();
