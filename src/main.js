@@ -1,6 +1,14 @@
 const {execSync} = require('child_process')
 const core = require('@actions/core')
 
+const env = {
+  PATH: process.env.PATH,
+  FORCE_COLOR: 'true',
+  DOTNET_CLI_HOME: '/tmp',
+  DOTNET_NOLOGO: 'true',
+  HOME: process.env.HOME,
+}
+
 function getInputs() {
   const testName = core.getInput('test-name', {
     required: true,
@@ -42,6 +50,7 @@ function executeTest(command, input, timeout) {
     const output = execSync(command, {
       input,
       timeout,
+      env
     })
       .toString()
       .trim()
@@ -73,6 +82,7 @@ function compareOutput(output, expected, method) {
 
 function run() {
   let inputs = {}
+
   try {
     inputs = getInputs()
 
@@ -80,6 +90,8 @@ function run() {
       execSync(inputs.setupCommand, {
         timeout: inputs.timeout,
         stdio: 'ignore',
+        env,
+
       })
     }
 
