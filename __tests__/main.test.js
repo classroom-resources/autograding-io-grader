@@ -33,6 +33,21 @@ test('test runs', () => {
   expect(result.tests[0].message).toBe(null)
 })
 
+test('contains pre-set environment variables', () => {
+  const result = runTestWithEnv({
+    'INPUT_TEST-NAME': 'Test 1',
+    INPUT_COMMAND: 'env',
+    'INPUT_EXPECTED-OUTPUT': 'Failing on purpose',
+    'INPUT_COMPARISON-METHOD': 'exact',
+  })
+
+  expect(result.tests[0].message).toContain(`PATH=${process.env.PATH}`)
+  expect(result.tests[0].message).toContain('FORCE_COLOR=true')
+  expect(result.tests[0].message).toContain('DOTNET_CLI_HOME=/tmp')
+  expect(result.tests[0].message).toContain('DOTNET_NOLOGO=true')
+  expect(result.tests[0].message).toContain(`HOME=${process.env.HOME}`)
+})
+
 test('grants score if test passes', () => {
   const result = runTestWithEnv({
     'INPUT_TEST-NAME': 'Max Score Test',
