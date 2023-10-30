@@ -48,6 +48,19 @@ test('contains pre-set environment variables', () => {
   expect(result.tests[0].message).toContain(`HOME=${process.env.HOME}`)
 })
 
+test('grants score if test passes', () => {
+  const result = runTestWithEnv({
+    'INPUT_TEST-NAME': 'Max Score Test',
+    INPUT_COMMAND: 'echo Hello, World!',
+    'INPUT_EXPECTED-OUTPUT': 'Hello, World!',
+    'INPUT_COMPARISON-METHOD': 'exact',
+    'INPUT_MAX-SCORE': '100',
+  })
+
+  expect(result.max_score).toBe(100)
+  expect(result.tests[0].score).toBe(100)
+})
+
 test('outputs error if test-name not provided', () => {
   const result = runTestWithEnv({})
 

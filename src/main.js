@@ -26,6 +26,8 @@ function getInputs() {
   })
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
 
+  const maxScore = parseInt(core.getInput('max-score') || 0)
+
   if (!['exact', 'contains', 'regex'].includes(comparisonMethod)) {
     throw new Error(`Invalid comparison method: ${comparisonMethod}`)
   }
@@ -42,6 +44,7 @@ function getInputs() {
     expectedOutput,
     comparisonMethod,
     timeout,
+    maxScore,
   }
 }
 
@@ -101,10 +104,12 @@ function run() {
 
     let status = 'pass'
     let message = null
+    let score = inputs.maxScore
 
     if (error) {
       status = 'fail'
       message = error
+      score = 0
     } else if (!compareOutput(output, inputs.expectedOutput, inputs.comparisonMethod)) {
       status = 'fail'
       message = `Output does not match expected. Got: ${output}`
@@ -113,6 +118,7 @@ function run() {
     const result = {
       version: 1,
       status,
+      max_score: inputs.maxScore,
       tests: [
         {
           name: inputs.testName,
@@ -122,6 +128,7 @@ function run() {
           filename: '',
           line_no: 0,
           duration: endTime - startTime,
+          score,
         },
       ],
     }
