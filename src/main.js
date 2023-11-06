@@ -127,7 +127,7 @@ function run() {
           test_code: `${inputs.command} <stdin>${inputs.input}`,
           filename: '',
           line_no: 0,
-          duration: endTime - startTime,
+          execution_time: `${(endTime - startTime) / 1000}s`,
           score,
         },
       ],
@@ -146,7 +146,7 @@ function run() {
           test_code: `${inputs.command || 'Unknown Command'} <stdin>${inputs.input || ''}`,
           filename: '',
           line_no: 0,
-          duration: 0,
+          execution_time: 0,
         },
       ],
     }
