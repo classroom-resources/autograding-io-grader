@@ -20,6 +20,8 @@
 | `expected-output` | The expected output that the command should print to stdout. | Yes |
 | `comparison-method` | Defines how the stdout output will be compared. Supported values are `included`, `exact`, and `regex`. | Yes |
 | `timeout` | Duration (in minutes) before the test is terminated. Defaults to 10 minutes with a maximum limit of 6 hours.| No |
+| `max-score` | The maximum amount of points a student can receive for this test.| No |
+
 
 ### Outputs
 
