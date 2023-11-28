@@ -3,7 +3,7 @@ const cp = require('child_process')
 const path = require('path')
 
 const node = process.execPath
-const ip = path.join(__dirname, '..', 'src', 'main.js')
+const ip = path.join(__dirname, '..', 'dist', 'main.js')
 
 function runTestWithEnv(env) {
   const options = {
@@ -54,11 +54,26 @@ test('grants score if test passes', () => {
     INPUT_COMMAND: 'echo Hello, World!',
     'INPUT_EXPECTED-OUTPUT': 'Hello, World!',
     'INPUT_COMPARISON-METHOD': 'exact',
-    'INPUT_MAX-SCORE': '100',
+    INPUT_TIMEOUT: 10,
+    'INPUT_MAX-SCORE': 100,
   })
 
   expect(result.max_score).toBe(100)
   expect(result.tests[0].score).toBe(100)
+})
+
+test('does not grant score if test fails', () => {
+  const result = runTestWithEnv({
+    'INPUT_TEST-NAME': 'Max Score Test Fail',
+    INPUT_COMMAND: 'echo Hello, World!',
+    'INPUT_EXPECTED-OUTPUT': 'Hello, World!!',
+    'INPUT_COMPARISON-METHOD': 'exact',
+    INPUT_TIMEOUT: 10,
+    'INPUT_MAX-SCORE': 100,
+  })
+
+  expect(result.max_score).toBe(100)
+  expect(result.tests[0].score).toBe(0)
 })
 
 test('outputs error if test-name not provided', () => {
