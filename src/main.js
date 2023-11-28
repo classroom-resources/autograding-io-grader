@@ -113,6 +113,7 @@ function run() {
     } else if (!compareOutput(output, inputs.expectedOutput, inputs.comparisonMethod)) {
       status = 'fail'
       message = `Output does not match expected. Got: ${output}`
+      score = 0
     }
 
     const result = {
