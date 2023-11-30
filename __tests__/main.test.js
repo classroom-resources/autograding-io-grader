@@ -3,7 +3,7 @@ const cp = require('child_process')
 const path = require('path')
 
 const node = process.execPath
-const ip = path.join(__dirname, '..', 'dist', 'main.js')
+const ip = path.join(__dirname, '..', 'src', 'main.js')
 
 function runTestWithEnv(env) {
   const options = {
@@ -128,7 +128,7 @@ test('handles command timeout correctly', () => {
     INPUT_TIMEOUT: '0.01', // 1 second Timeout
   })
 
-  expect(result.tests[0].status).toBe('fail')
+  expect(result.tests[0].status).toBe('error')
   expect(result.tests[0].message).toContain('Command was killed due to timeout')
 })
 
