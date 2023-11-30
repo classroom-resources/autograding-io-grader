@@ -107,7 +107,7 @@ function run() {
     let score = inputs.maxScore
 
     if (error) {
-      status = 'fail'
+      status = 'error'
       message = error
       score = 0
     } else if (!compareOutput(output, inputs.expectedOutput, inputs.comparisonMethod)) {
@@ -138,11 +138,11 @@ function run() {
   } catch (error) {
     const result = {
       version: 1,
-      status: 'fail',
+      status: 'error',
       tests: [
         {
           name: inputs.testName || 'Unknown Test',
-          status: 'fail',
+          status: 'error',
           message: error.message,
           test_code: `${inputs.command || 'Unknown Command'} <stdin>${inputs.input || ''}`,
           filename: '',
