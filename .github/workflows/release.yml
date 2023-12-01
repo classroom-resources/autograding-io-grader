@@ -21,8 +21,8 @@ jobs:
           echo "Set global git config"
           git config --global user.name 'Release Bot'
           git config --global user.email 'release-bot@users.noreply.github.com'
-          echo "Commit"
-          git commit -am "v1"
+          echo "Commit changes"
+          git commit -am "Release v1"
           echo "Force push to overwrite any previous commits for this branch"
           git push -f origin releases/v1
           echo "Remove previously pushed tags (v1 will be unusable momentarily until you re-push)"
