@@ -11,7 +11,7 @@ jobs:
         run: |
           set -e
           echo "Checkout the release branch"
-          git checkout releases/v1  
+          git checkout origin/releases/v1  
           echo "Bring latest changes from main"
           git reset --hard main
           echo "Install dependencies"
