@@ -53,10 +53,9 @@ function executeTest(command, input, timeout) {
     const output = execSync(command, {
       input,
       timeout,
-      env
-    })
-      .toString()
-      .trim()
+      env,
+      stdio: 'inherit',
+    })?.toString()
     return {
       output,
     }
@@ -92,9 +91,8 @@ function run() {
     if (inputs.setupCommand) {
       execSync(inputs.setupCommand, {
         timeout: inputs.timeout,
-        stdio: 'ignore',
+        stdio: 'inherit',
         env,
-
       })
     }
 
