@@ -111,12 +111,8 @@ function run() {
       score = 0
     } else if (!compareOutput(output, inputs.expectedOutput, inputs.comparisonMethod)) {
       status = 'fail'
-      message = `Output does not match expected. Got: ${output}`
+      message = `Output does not match expected: ${inputs.expectedOutput} Got: ${output}`
       score = 0
-    }
-
-    if (message) {
-      console.log(message)
     }
 
     const result = {
@@ -137,6 +133,7 @@ function run() {
       ],
     }
 
+    console.log(result)
     core.setOutput('result', btoa(JSON.stringify(result)))
   } catch (error) {
     const result = {
