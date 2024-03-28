@@ -115,6 +115,10 @@ function run() {
       score = 0
     }
 
+    if (message) {
+      console.log(message)
+    }
+
     const result = {
       version: 1,
       status,
