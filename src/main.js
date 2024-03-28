@@ -54,8 +54,9 @@ function executeTest(command, input, timeout) {
       input,
       timeout,
       env,
-      stdio: 'inherit',
-    })?.toString()
+    })
+      .toString()
+      .trim()
     return {
       output,
     }
