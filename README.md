@@ -46,7 +46,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Run Autograding Tests
-      uses: education/autograding-io-grader@v1
+      uses: classroom-resources/autograding-io-grader@v1
       with:
         test-name: 'Test Name'
         command: './bin/shout'
